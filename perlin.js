@@ -113,10 +113,10 @@ function render_pixel(i, j, v1, v2, v3, v4) {
     const int_x = interpolate(x_ratio);
     const int_y = interpolate(y_ratio);
     const v = new Vector(x_ratio, y_ratio);
-    const r1 = v1.subtract(v), d1 = r1.dot(v1);
-    const r2 = v2.subtract(v), d2 = r2.dot(v2);
-    const r3 = v3.subtract(v), d3 = r3.dot(v3);
-    const r4 = v4.subtract(v), d4 = r4.dot(v4);
+    const r1 = zero.subtract(v), d1 = r1.dot(v1);
+    const r2 = ynorm.subtract(v), d2 = r2.dot(v2);
+    const r3 = xnorm.add(ynorm).subtract(v), d3 = r3.dot(v3);
+    const r4 = xnorm.subtract(v), d4 = r4.dot(v4);
     return limit((d1 * (1 - int_x) + d4 * int_x) * (1 - int_y) +
                  (d2 * (1 - int_x) + d3 * int_x) * int_y,
                  0,
@@ -127,7 +127,7 @@ function render_cell(x, y, v1, v2, v3, v4) {
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
             const mono_color = Math.floor(render_pixel(i, j, v1, v2, v3, v4) * 255);
-            change_pixel_color(x + i, y + j, mono_color);
+            change_pixel_color(x*gridSize + i, y*gridSize + j, mono_color);
         }
     }
 }
@@ -141,7 +141,7 @@ function drawCanvas(gridSize) {
             const v2 = vec_lattice[j + 1][i];
             const v3 = vec_lattice[j + 1][i + 1];
             const v4 = vec_lattice[j][i + 1];
-            render_cell(i * gridSize, j * gridSize, v1, v2, v3, v4);
+            render_cell(i, j, v1, v2, v3, v4);
         }
     }
 }
