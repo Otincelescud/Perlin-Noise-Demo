@@ -103,26 +103,9 @@ function change_pixel_color(i, j, mono_color) {
     ctx.putImageData(imageData, i, j);
 }
 
-function render_pixel(i, j, v1, v2, v3, v4) {
-    const x_ratio = i / gridSize;
-    const y_ratio = j / gridSize;
-    const v = new Vector(x_ratio, y_ratio);
-    const r1 = v1.subtract(v)
-
-
-}
-
-function render_cell(x, y, v1, v2, v3, v4) {
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {}
-    }
-}
-
 function drawCanvas(seed, gridSize) {
     clearCanvas();
     drawGrid(gridSize, gridSize, 3, "#ffffff");
 }
 drawCanvas(seed, gridSize);
 drawVector(xgrid.add(ygrid), new Vector(1, 1), 3, "#ccc");
-change_pixel_color(2, 2, 255);
-change_pixel_color(2, 2, 0);
