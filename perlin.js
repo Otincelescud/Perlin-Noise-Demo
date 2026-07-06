@@ -103,6 +103,25 @@ function change_pixel_color(i, j, mono_color) {
     ctx.putImageData(imageData, i, j);
 }
 
+function limit(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
+function render_pixel(i, j, v1, v2, v3, v4) {
+    const x_ratio = i / gridSize;
+    const y_ratio = j / gridSize;
+    const int_x = interpolate(x_ratio);
+    const int_y = interpolate(y_ratio);
+    const v = new Vector(x_ratio, y_ratio);
+    const r1 = v1.subtract(v), d1 = r1.dot(v1);
+    const r2 = v2.subtract(v), d2 = r2.dot(v2);
+    const r3 = v3.subtract(v), d3 = r3.dot(v3);
+    const r4 = v4.subtract(v), d4 = r4.dot(v4);
+    return limit((d1 * (1 - int_x) + d4 * int_x) * (1 - int_y) + (d2 * (1 - int_x) + d3 * int_x) * int_y,
+                 0,
+                 1);
+}
+
 function drawCanvas(seed, gridSize) {
     clearCanvas();
     drawGrid(gridSize, gridSize, 3, "#ffffff");
