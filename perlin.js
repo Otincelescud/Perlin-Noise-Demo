@@ -28,3 +28,28 @@ constructor(x = 0, y = 0) {
     }
 }
 
+const zero = new Vector(0, 0);
+
+const xvec = new Vector(canvas.width, 0);
+const yvec = new Vector(0, canvas.height);
+
+const xgrid = new Vector(gridSize, 0);
+const ygrid = new Vector(0, gridSize);
+
+const xnorm = new Vector(1, 0);
+const ynorm = new Vector(0, 1);
+
+function clearCanvas() {
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawLine(start, end, thickness = 3, color = "#ffffff") {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = thickness;
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+}
+
