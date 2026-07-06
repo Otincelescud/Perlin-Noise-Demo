@@ -71,3 +71,22 @@ function drawGrid(gridW, gridH = null, thickness = 3, color = "#ffffff") {
     }
 }
 
+function drawVector(pos_vector, vector, thickness = 3, color = "#ffffff") {
+    // We need to calculate the positions of 2 nontrivial points:
+    // aka the points representing the arrowhead of the vector.
+    start = pos_vector;
+    end = pos_vector.add(vector.multiply(gridSize*0.3));
+
+    // Calculate the angle of the vector
+    const angle = Math.atan2(vector.y, vector.x);
+    const angle1 = angle + Math.PI / 6 + Math.PI; // 30 degrees
+    const angle2 = angle - Math.PI / 6 + Math.PI; // 30 degrees
+
+    small_vector1 = new Vector(Math.cos(angle1), Math.sin(angle1)).multiply(10);
+    small_vector2 = new Vector(Math.cos(angle2), Math.sin(angle2)).multiply(10);
+
+    drawLine(start, end, thickness, color);
+    drawLine(end, end.add(small_vector1), thickness, color);
+    drawLine(end, end.add(small_vector2), thickness, color);
+}
+
