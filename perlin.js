@@ -137,3 +137,21 @@ function drawCanvas(gridSize) {
     drawGrid(gridSize, gridSize, 3, "#ffffff");
 }
 
+angle_lattice = [];
+vec_lattice = [];
+
+function generate_random_angle() {
+    Math.seed = seed;
+    return Math.random() * 2 * Math.PI;
+}
+
+// Generate angle and vector lattices
+for (let i = 0; i <= Math.floor(canvas.height / gridSize) + 1; i++) {
+    let arr = [];
+    for (let j = 0; j <= Math.floor(canvas.width / gridSize) + 1; j++) {
+        const angle = generate_random_angle(seed + i * 1000 + j);
+        arr.push(angle);
+    }
+    angle_lattice.push(arr);
+}
+drawCanvas(gridSize);
