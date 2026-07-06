@@ -53,3 +53,21 @@ function drawLine(start, end, thickness = 3, color = "#ffffff") {
     ctx.stroke();
 }
 
+function drawGrid(gridW, gridH = null, thickness = 3, color = "#ffffff") {
+    if (gridH === null) gridH = gridW;
+
+    for (let vec = ygrid; vec.y <= canvas.height; vec = vec.add(ygrid)) {
+        drawLine(vec,
+                 vec.add(xvec),
+                 thickness,
+                 color);
+    }
+
+    for (let vec = xgrid; vec.x <= canvas.width; vec = vec.add(xgrid)) {
+        drawLine(vec,
+                 vec.add(yvec),
+                 thickness,
+                 color);
+    }
+}
+
