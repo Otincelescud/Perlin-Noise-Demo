@@ -149,7 +149,11 @@ function drawCanvas(gridSize) {
             render_cell(i, j, v1, v2, v3, v4);
         }
     }
-    ctx.putImageData(frameBuffer, 0, 0);
+}
+
+function discretize_color(mono_color, num_colors) {
+    const step = 255 / (num_colors - 1);
+    return Math.round(mono_color / step) * step;
 }
 
 function animate() {
@@ -162,7 +166,18 @@ function animate() {
         }
     }
 
+    // draw objects
     drawCanvas(gridSize);
+    for (let i = 0; i < canvas.width; i++) {
+        for (let j = 0; j < canvas.height; j++) {
+            const idx = (j * canvas.width + i) * 4;
+            const current_color = frameBuffer.data[idx];
+            const new_color = discretize_color(current_color, 8);
+            change_pixel_color(i, j, new_color);
+        }
+    }
+    ctx.putImageData(frameBuffer, 0, 0);
+    
 
     requestAnimationFrame(animate);
 }
