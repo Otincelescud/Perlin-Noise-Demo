@@ -154,4 +154,14 @@ for (let i = 0; i <= Math.floor(canvas.height / gridSize) + 1; i++) {
     }
     angle_lattice.push(arr);
 }
+
+for (let i = 0; i <= Math.floor(canvas.height / gridSize) + 1; i++) {
+    let arr = [];
+    for (let j = 0; j <= Math.floor(canvas.width / gridSize) + 1; j++) {
+        arr.push(new Vector(Math.cos(angle_lattice[i][j]),
+                            Math.sin(angle_lattice[i][j])));
+    }
+    vec_lattice.push(arr);
+}
+
 drawCanvas(gridSize);
