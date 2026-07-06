@@ -6,6 +6,17 @@ const sizeInput = document.getElementById("size");
 
 const seed = parseInt(seedInput.value) || 4205834029;
 const gridSize = parseInt(sizeInput.value) || 10;
+const water_color_pallet = [
+    [15, 32, 80],    // deep navy
+    [28, 57, 120],   // strong blue
+    [45, 86, 155],   // ocean blue
+    [70, 115, 185],  // blue sky
+    [102, 148, 210], // lighter sea
+    [135, 178, 225], // pale aqua
+    [170, 204, 238], // light blue
+    [205, 228, 248], // very light blue
+    [235, 245, 255]  // almost white blue
+];
 
 class Vector {
 constructor(x = 0, y = 0) {
@@ -103,8 +114,17 @@ for (let k = 3; k < frameBuffer.data.length; k += 4) {
     frameBuffer.data[k] = 255;
 }
 
-function change_pixel_color(i, j, mono_color) {
+function change_pixel_color(i, j, color) {
     const idx = (j * canvas.width + i) * 4;
+    if (Array.isArray(color)) {
+        frameBuffer.data[idx] = clamp(color[0], 0, 255);
+        frameBuffer.data[idx + 1] = clamp(color[1], 0, 255);
+        frameBuffer.data[idx + 2] = clamp(color[2], 0, 255);
+        frameBuffer.data[idx + 3] = color[3] === undefined ? 255 : clamp(color[3], 0, 255);
+        return;
+    }
+
+    const mono_color = clamp(color, 0, 255);
     frameBuffer.data[idx] = mono_color;     // red
     frameBuffer.data[idx + 1] = mono_color; // green
     frameBuffer.data[idx + 2] = mono_color; // blue
@@ -134,7 +154,7 @@ function render_cell(x, y, v1, v2, v3, v4) {
         for (let j = 0; j < gridSize; j++) {
             const mono_color = clamp(Math.floor((render_pixel(i, j, v1, v2, v3, v4)+1)*0.5 * 255), 0, 255); // remap and clamp
             min_color = Math.min(min_color, mono_color);
-            change_pixel_color(x*gridSize + i, y*gridSize + j, mono_color);
+            change_pixel_color(x*gridSize + i, y*gridSize + j, [mono_color, mono_color, mono_color, 255]);
         }
     }
 }
@@ -151,7 +171,32 @@ function drawCanvas(gridSize) {
     }
 }
 
-function discretize_color(mono_color, num_colors) {
+function discretize_color(mono_color, options = {}) {
+    if (typeof options === "number") {
+        options = { num_colors: options };
+    }
+
+    if (Array.isArray(options)) {
+        options = { palette: options };
+    }
+
+    const palette = options.palette;
+    if (Array.isArray(palette) && palette.length > 0) {
+        const count = palette.length;
+        const index = Math.min(count - 1, Math.floor(mono_color * count / 256));
+        const entry = palette[index];
+        if (Array.isArray(entry)) {
+            return [
+                clamp(entry[0], 0, 255),
+                clamp(entry[1], 0, 255),
+                clamp(entry[2], 0, 255),
+                entry[3] === undefined ? 255 : clamp(entry[3], 0, 255)
+            ];
+        }
+        return [mono_color, mono_color, mono_color, 255];
+    }
+
+    const num_colors = Number.isFinite(options.num_colors) ? options.num_colors : 2;
     const step = 255 / (num_colors - 1);
     return Math.round(mono_color / step) * step;
 }
@@ -172,7 +217,7 @@ function animate() {
         for (let j = 0; j < canvas.height; j++) {
             const idx = (j * canvas.width + i) * 4;
             const current_color = frameBuffer.data[idx];
-            const new_color = discretize_color(current_color, 8);
+            const new_color = discretize_color(current_color, { palette: water_color_pallet });
             change_pixel_color(i, j, new_color);
         }
     }
