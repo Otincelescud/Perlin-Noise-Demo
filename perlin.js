@@ -39,6 +39,9 @@ const ygrid = new Vector(0, gridSize);
 const xnorm = new Vector(1, 0);
 const ynorm = new Vector(0, 1);
 
+angle_lattice = [];
+vec_lattice = [];
+
 function clearCanvas() {
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -94,13 +97,18 @@ function interpolate(t) {
     return 6*t**5 - 15*t**4 + 10*t**3;
 }
 
+const frameBuffer = ctx.createImageData(canvas.width, canvas.height);
+// Start fully opaque black so edge pixels outside the cell grid aren't transparent
+for (let k = 3; k < frameBuffer.data.length; k += 4) {
+    frameBuffer.data[k] = 255;
+}
+
 function change_pixel_color(i, j, mono_color) {
-    const imageData = ctx.createImageData(1, 1);
-    imageData.data[0] = mono_color; // red
-    imageData.data[1] = mono_color;   // green
-    imageData.data[2] = mono_color;   // blue
-    imageData.data[3] = 255;
-    ctx.putImageData(imageData, i, j);
+    const idx = (j * canvas.width + i) * 4;
+    frameBuffer.data[idx] = mono_color;     // red
+    frameBuffer.data[idx + 1] = mono_color; // green
+    frameBuffer.data[idx + 2] = mono_color; // blue
+    frameBuffer.data[idx + 3] = 255;
 }
 
 function clamp(value, min, max) {
@@ -132,8 +140,6 @@ function render_cell(x, y, v1, v2, v3, v4) {
 }
 
 function drawCanvas(gridSize) {
-    clearCanvas();
-    drawGrid(gridSize, gridSize, 3, "#ffffff");
     for (let i = 0; i < Math.floor(canvas.width / gridSize); i++) {
         for (let j = 0; j < Math.floor(canvas.height / gridSize); j++) {
             const v1 = vec_lattice[j][i];
@@ -145,8 +151,36 @@ function drawCanvas(gridSize) {
     }
 }
 
-angle_lattice = [];
-vec_lattice = [];
+function discretize_color(mono_color, num_colors) {
+    const step = 255 / (num_colors - 1);
+    return Math.round(mono_color / step) * step;
+}
+
+function animate() {
+    // update objects
+    for (let i = 0; i <= Math.floor(canvas.height / gridSize) + 1; i++) {
+        for (let j = 0; j <= Math.floor(canvas.width / gridSize) + 1; j++) {
+            angle_lattice[i][j] += 0.01;
+            vec_lattice[i][j].x = Math.cos(angle_lattice[i][j]);
+            vec_lattice[i][j].y = Math.sin(angle_lattice[i][j]);
+        }
+    }
+
+    // draw objects
+    drawCanvas(gridSize);
+    for (let i = 0; i < canvas.width; i++) {
+        for (let j = 0; j < canvas.height; j++) {
+            const idx = (j * canvas.width + i) * 4;
+            const current_color = frameBuffer.data[idx];
+            const new_color = discretize_color(current_color, 8);
+            change_pixel_color(i, j, new_color);
+        }
+    }
+    ctx.putImageData(frameBuffer, 0, 0);
+    
+
+    requestAnimationFrame(animate);
+}
 
 function generate_random_angle() {
     Math.seed = seed;
@@ -172,5 +206,4 @@ for (let i = 0; i <= Math.floor(canvas.height / gridSize) + 1; i++) {
     vec_lattice.push(arr);
 }
 
-drawCanvas(gridSize);
-console.log("Minimum color value: " + min_color);
+animate();
