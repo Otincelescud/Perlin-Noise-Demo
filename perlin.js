@@ -135,6 +135,15 @@ function render_cell(x, y, v1, v2, v3, v4) {
 function drawCanvas(gridSize) {
     clearCanvas();
     drawGrid(gridSize, gridSize, 3, "#ffffff");
+    for (let i = 0; i < Math.floor(canvas.width / gridSize); i++) {
+        for (let j = 0; j < Math.floor(canvas.height / gridSize); j++) {
+            const v1 = vec_lattice[j][i];
+            const v2 = vec_lattice[j + 1][i];
+            const v3 = vec_lattice[j + 1][i + 1];
+            const v4 = vec_lattice[j][i + 1];
+            render_cell(i * gridSize, j * gridSize, v1, v2, v3, v4);
+        }
+    }
 }
 
 angle_lattice = [];
