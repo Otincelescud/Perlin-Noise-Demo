@@ -90,10 +90,39 @@ function drawVector(pos_vector, vector, thickness = 3, color = "#ffffff") {
     drawLine(end, end.add(small_vector2), thickness, color);
 }
 
+function interpolate(t) {
+    return 6*t**5 - 15*t**4 + 10*t**3;
+}
+
+function change_pixel_color(i, j, mono_color) {
+    const imageData = ctx.createImageData(1, 1);
+    imageData.data[0] = mono_color; // red
+    imageData.data[1] = mono_color;   // green
+    imageData.data[2] = mono_color;   // blue
+    imageData.data[3] = 255;
+    ctx.putImageData(imageData, i, j);
+}
+
+function render_pixel(i, j, v1, v2, v3, v4) {
+    const x_ratio = i / gridSize;
+    const y_ratio = j / gridSize;
+    const v = new Vector(x_ratio, y_ratio);
+    const r1 = v1.subtract(v)
+
+
+}
+
+function render_cell(x, y, v1, v2, v3, v4) {
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {}
+    }
+}
+
 function drawCanvas(seed, gridSize) {
     clearCanvas();
     drawGrid(gridSize, gridSize, 3, "#ffffff");
 }
 drawCanvas(seed, gridSize);
 drawVector(xgrid.add(ygrid), new Vector(1, 1), 3, "#ccc");
-
+change_pixel_color(2, 2, 255);
+change_pixel_color(2, 2, 0);
