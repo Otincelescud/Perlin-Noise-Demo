@@ -103,7 +103,7 @@ function change_pixel_color(i, j, mono_color) {
     ctx.putImageData(imageData, i, j);
 }
 
-function limit(value, min, max) {
+function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
 }
 
@@ -117,16 +117,15 @@ function render_pixel(i, j, v1, v2, v3, v4) {
     const r2 = ynorm.subtract(v), d2 = r2.dot(v2);
     const r3 = xnorm.add(ynorm).subtract(v), d3 = r3.dot(v3);
     const r4 = xnorm.subtract(v), d4 = r4.dot(v4);
-    return limit((d1 * (1 - int_x) + d4 * int_x) * (1 - int_y) +
-                 (d2 * (1 - int_x) + d3 * int_x) * int_y,
-                 0,
-                 1);
+    return (d1 * (1 - int_x) + d4 * int_x) * (1 - int_y) +
+           (d2 * (1 - int_x) + d3 * int_x) * int_y
 }
-
+let min_color = 255;
 function render_cell(x, y, v1, v2, v3, v4) {
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-            const mono_color = Math.floor(render_pixel(i, j, v1, v2, v3, v4) * 255);
+            const mono_color = clamp(Math.floor((render_pixel(i, j, v1, v2, v3, v4)+1)*0.5 * 255), 0, 255); // remap and clamp
+            min_color = Math.min(min_color, mono_color);
             change_pixel_color(x*gridSize + i, y*gridSize + j, mono_color);
         }
     }
@@ -174,3 +173,4 @@ for (let i = 0; i <= Math.floor(canvas.height / gridSize) + 1; i++) {
 }
 
 drawCanvas(gridSize);
+console.log("Minimum color value: " + min_color);
