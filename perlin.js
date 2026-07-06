@@ -90,3 +90,10 @@ function drawVector(pos_vector, vector, thickness = 3, color = "#ffffff") {
     drawLine(end, end.add(small_vector2), thickness, color);
 }
 
+function drawCanvas(seed, gridSize) {
+    clearCanvas();
+    drawGrid(gridSize, gridSize, 3, "#ffffff");
+}
+drawCanvas(seed, gridSize);
+drawVector(xgrid.add(ygrid), new Vector(1, 1), 3, "#ccc");
+
