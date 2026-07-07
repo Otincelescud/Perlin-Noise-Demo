@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perlin Noise</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form {
+            padding: 12px;
+            background: #f3f3f3;
+        }
+
+        canvas {
+            flex: 1;
+            display: block;
+            width: 100%;
+            height: auto;
+            background: black;
+        }
+    </style>
 </head>
 <body>
     <form>
@@ -12,7 +37,7 @@
         <label for="size">Grid Size</label>
         <input type="number" id="size" placeholder="10">
     </form>
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <canvas id="canvas"></canvas>
     <script src="perlin.js" defer></script>
 </body>
 </html>
